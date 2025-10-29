@@ -1,0 +1,145 @@
+from pessoa import Cliente, Prestador
+from servico import Servico, ServicoEspecial
+from pedido import Pedido
+from repositorio import Repositorio
+
+
+def exibir_menu():
+    print("\n=== IFOOD DE SERVIÇOS DOMÉSTICOS ===")
+    print("1. Cadastrar cliente")
+    print("2. Cadastrar prestador")
+    print("3. Listar serviços disponíveis")
+    print("4. Fazer pedido")
+    print("5. Listar pedidos")
+    print("6. Atualizar status de pedido")
+    print("0. Sair")
+
+
+def main():
+    repositorio = Repositorio()
+
+
+    # Catálogo fixo de serviços disponíveis
+    servicos = {
+        1: Servico("Limpeza Residencial", 50),
+        2: Servico("Lavagem de Roupas", 40),
+        3: ServicoEspecial("Reparo Elétrico", 80),
+        4: ServicoEspecial("Conserto Hidráulico", 70),
+    }
+
+
+    clientes = []
+    prestadores = []
+
+
+    while True:
+        exibir_menu()
+        opcao = input("Escolha uma opção: ")
+
+
+        if opcao == "1":
+            nome = input("Nome do cliente: ")
+            email = input("Email: ")
+            telefone = input("Telefone: ")
+            endereco = input("Endereço: ")
+            cliente = Cliente(nome, email, telefone, endereco)
+            clientes.append(cliente)
+            print("✅ Cliente cadastrado com sucesso!")
+
+
+        elif opcao == "2":
+            nome = input("Nome do prestador: ")
+            email = input("Email: ")
+            telefone = input("Telefone: ")
+            especialidade = input("Especialidade: ")
+            prestador = Prestador(nome, email, telefone, especialidade)
+            prestadores.append(prestador)
+            print("✅ Prestador cadastrado com sucesso!")
+
+
+        elif opcao == "3":
+            print("\n📋 Serviços disponíveis:")
+            for codigo, servico in servicos.items():
+                print(f"{codigo}. {servico.descricao} - R$ {servico.preco_hora}/h")
+
+
+        elif opcao == "4":
+            if not clientes or not prestadores:
+                print("⚠️ É necessário ter pelo menos 1 cliente e 1 prestador cadastrados.")
+                continue
+
+
+            print("\nEscolha um cliente:")
+            for i, cliente in enumerate(clientes):
+                print(f"{i + 1}. {cliente.nome}")
+            cliente_idx = int(input("Cliente nº: ")) - 1
+            cliente = clientes[cliente_idx]
+
+
+            print("\nEscolha um prestador:")
+            for i, prestador in enumerate(prestadores):
+                print(f"{i + 1}. {prestador.nome} ({prestador.especialidade})")
+            prestador_idx = int(input("Prestador nº: ")) - 1
+            prestador = prestadores[prestador_idx]
+
+
+            print("\nEscolha um serviço:")
+            for codigo, servico in servicos.items():
+                print(f"{codigo}. {servico.descricao} - R$ {servico.preco_hora}/h")
+            servico_cod = int(input("Serviço nº: "))
+            servico = servicos.get(servico_cod)
+
+
+            horas = float(input("Quantidade de horas estimadas: "))
+            pedido = Pedido(cliente, prestador, servico, horas)
+            repositorio.adicionar_pedido(pedido)
+
+
+            print("✅ Pedido criado com sucesso!")
+            print(pedido.exibir_resumo())
+
+
+        elif opcao == "5":
+            print("\n📦 Lista de pedidos:")
+            pedidos = repositorio.listar_pedidos()
+            if pedidos:
+                for i, resumo in enumerate(pedidos, start=1):
+                    print(f"\nPedido {i}:")
+                    print(resumo)
+            else:
+                print("Nenhum pedido encontrado.")
+
+
+        elif opcao == "6":
+            pedidos = repositorio.listar_pedidos()
+            if not pedidos:
+                print("⚠️ Nenhum pedido disponível para atualizar.")
+                continue
+
+
+            for i, resumo in enumerate(pedidos, start=1):
+                print(f"{i}. {resumo}")
+
+
+            idx = int(input("Escolha o número do pedido: ")) - 1
+            if idx < 0 or idx >= len(repositorio.pedidos):
+                print("❌ Pedido inválido.")
+                continue
+
+
+            novo_status = input("Novo status (Ex: 'Em andamento', 'Concluído'): ")
+            repositorio.pedidos[idx].atualizar_status(novo_status)
+            print("✅ Status atualizado com sucesso!")
+
+
+        elif opcao == "0":
+            print("👋 Saindo... Obrigado por usar o iFood de Serviços Domésticos!")
+            break
+
+
+        else:
+            print("❌ Opção inválida. Tente novamente.")
+
+
+if __name__ == "__main__":
+    main()

@@ -35,14 +35,5 @@ O projeto implementa os principais Casos de Uso do sistema através das abas da 
 * **3. Listar Pedidos:** Exibe todos os pedidos criados e seu status atual.
 * **4. Atualizar Status:** Permite que o status de um pedido existente seja alterado (Ex: de 'Pendente' para 'Concluído').
 
-## 🚀 Como Executar o Projeto
 
-Siga os passos abaixo para clonar e rodar a aplicação:
 
-### 1. Requisitos
-
-Certifique-se de ter o **Python 3.x** instalado.
-
-### 2. Clonar o Repositório
-
-```bash
